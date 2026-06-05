@@ -788,18 +788,11 @@
       <p style="color:#888;">กรอกข้อมูลให้ครบถ้วน และอย่าลืมอัปโหลดสลิปการโอนเงิน 50 บาท</p>
     </div>
 
-    <!-- hidden iframe รับ response จาก Apps Script (หลีกเลี่ยง CORS) -->
-    <iframe id="hiddenFrame" name="hiddenFrame" style="display:none" onload="onFrameLoad()"></iframe>
-
-    <form class="reg-form" id="regForm"
-          action="https://script.google.com/macros/s/AKfycbz68Wh9XrxRAODuxeTk4kKDQUEz46SjOmKX7Ov3E3YFrninzYjRZVjc89koKbvhok1V/exec"
-          method="POST"
-          target="hiddenFrame"
-          onsubmit="submitForm(event)">
+    <form class="reg-form" id="regForm" onsubmit="submitForm(event)">
 
       <div class="form-notice">
         💳 โอนเงิน <strong>50 บาท</strong> มาที่ SCB เลขที่บัญชี <strong>829-2-57199-6</strong> ชื่อบัญชี <strong>ศุภวิชญ์ เพ็งวงษ์</strong><br/>
-        จากนั้นถ่ายสลิปมาแนบในฟอร์มนี้ — ทีมงานจะยืนยันการสมัครภายใน 24 ชั่วโมง
+        กรอกข้อมูลด้านล่าง แล้ว <strong>ส่งสลิปทาง Facebook: Load dice boardgame</strong> หรือโทร 082-172-9260
       </div>
 
       <div class="form-group">
@@ -824,24 +817,12 @@
 
       <div class="form-divider"></div>
 
-      <div class="form-group">
-        <label>อัปโหลดสลิปการโอนเงิน <span class="req">*</span></label>
-        <div class="slip-upload-area" id="uploadArea">
-          <input type="file" id="slipFile" accept="image/*,.pdf" required
-                 onchange="previewSlip(this)" />
-          <div class="upload-icon">📎</div>
-          <div class="upload-text">
-            <strong>คลิกหรือลากไฟล์มาวาง</strong><br/>
-            รองรับ JPG, PNG, PDF (ขนาดไม่เกิน 5MB)
-          </div>
-          <div class="slip-preview" id="slipPreview">
-            <img id="previewImg" src="" alt="preview" />
-            <div class="slip-name" id="slipFileName"></div>
-          </div>
-        </div>
-        <!-- hidden fields สำหรับส่งสลิปเป็น base64 -->
-        <input type="hidden" id="slipBase64" name="slipBase64" />
-        <input type="hidden" id="slipName"   name="slipName" />
+      <!-- แจ้งเตือนส่งสลิปแยก -->
+      <div style="background:rgba(79,195,247,0.08);border:1px solid rgba(79,195,247,0.25);border-radius:12px;padding:18px 20px;margin-bottom:24px;font-size:0.9rem;color:#aaa;line-height:1.7;">
+        📎 <strong style="color:#fff;">ส่งสลิปการโอนเงินแยกต่างหาก</strong><br/>
+        หลังกรอกฟอร์มแล้ว ส่งสลิปมาที่:<br/>
+        &nbsp;&nbsp;📘 Facebook: <strong style="color:var(--gem-blue);">Load dice boardgame</strong><br/>
+        &nbsp;&nbsp;📞 โทร/LINE: <strong style="color:var(--gem-blue);">082-172-9260</strong>
       </div>
 
       <button type="submit" class="submit-btn" id="submitBtn">
@@ -893,7 +874,7 @@
   // แทนที่ URL นี้ด้วย Web App URL จาก Google Apps Script ของคุณ
   // ดูวิธีที่ไฟล์ SETUP_GUIDE.md
   // ============================================================
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz68Wh9XrxRAODuxeTk4kKDQUEz46SjOmKX7Ov3E3YFrninzYjRZVjc89koKbvhok1V/exec";
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYDukLsu_Oy0WOLjwlfFaC-NlH0Nv9WrJ1_FJznIo2x4setl4NXaiCrky9hTK3InDd/exec";
 
   // ===== COUNTDOWN =====
   function updateCountdown() {
@@ -941,62 +922,90 @@
     }
   }
 
-  // ===== SUBMIT FORM (iframe method — no CORS issues) =====
-  var formSubmitted = false;
-
-  async function submitForm(e) {
+  // ===== SUBMIT FORM via JSONP (ไม่มี CORS ปัญหา) =====
+  function submitForm(e) {
     e.preventDefault();
     const btn    = document.getElementById('submitBtn');
     const result = document.getElementById('formResult');
+
+    const fullname = document.getElementById('fullname').value.trim();
+    const nickname = document.getElementById('nickname').value.trim();
+    const phone    = document.getElementById('phone').value.trim();
+    const email    = document.getElementById('email').value.trim();
+
+    if (!fullname || !nickname || !phone || !email) {
+      result.className = 'form-result error';
+      result.innerHTML = '❌ กรุณากรอกข้อมูลให้ครบทุกช่อง';
+      result.style.display = 'block';
+      return;
+    }
 
     btn.disabled = true;
     btn.textContent = '⏳ กำลังส่งข้อมูล...';
     result.style.display = 'none';
 
-    try {
-      const slipFile = document.getElementById('slipFile').files[0];
-      if (slipFile) {
-        if (slipFile.size > 5 * 1024 * 1024) {
-          throw new Error('ไฟล์สลิปใหญ่เกิน 5MB กรุณาบีบอัดภาพก่อน');
-        }
-        // ใส่ base64 ลง hidden fields
-        const b64 = await toBase64(slipFile);
-        document.getElementById('slipBase64').value = b64;
-        document.getElementById('slipName').value   = slipFile.name;
-      }
-
-      // ส่งผ่าน hidden iframe (หลีกเลี่ยง CORS ทั้งหมด)
-      formSubmitted = true;
-      document.getElementById('regForm').submit();
-
-      // แสดงผลสำเร็จ (iframe จะรับ response เอง)
-      setTimeout(function() {
+    jsonpRequest({
+      action:   'register',
+      fullname:  fullname,
+      nickname:  nickname,
+      phone:     phone,
+      email:     email
+    }, function(data) {
+      if (data && data.success) {
         result.className = 'form-result success';
-        result.innerHTML = '✅ ส่งใบสมัครสำเร็จ! ทีมงานจะตรวจสอบและยืนยันภายใน 24 ชั่วโมง 🎲<br/><small style="color:#aaa;margin-top:8px;display:block;">หากไม่ได้รับการยืนยัน ติดต่อ <strong>082-172-9260</strong> หรือ FB: Load dice boardgame</small>';
-        result.style.display = 'block';
-        document.getElementById('slipPreview').style.display = 'none';
-        document.getElementById('slipBase64').value = '';
-        document.getElementById('slipName').value   = '';
-        // reset ข้อความใน fields (ยกเว้น hidden)
+        result.innerHTML = '✅ ลงทะเบียนสำเร็จ! (ลำดับที่ ' + (data.row || '') + ')<br/>'
+          + '<small style="color:#aaa;margin-top:8px;display:block;">'
+          + 'อย่าลืมส่งสลิปทาง <strong>FB: Load dice boardgame</strong> หรือ 082-172-9260 ด้วยนะครับ</small>';
         ['fullname','nickname','phone','email'].forEach(function(id) {
           document.getElementById(id).value = '';
         });
-        btn.disabled = false;
-        btn.textContent = '🎲 ส่งใบสมัครแข่งขัน';
-      }, 2000);
-
-    } catch (err) {
-      result.className = 'form-result error';
-      result.innerHTML = '❌ ' + err.message + '<br/><small>📞 ติดต่อทีมงาน: 082-172-9260</small>';
+      } else {
+        result.className = 'form-result error';
+        result.innerHTML = '❌ เกิดข้อผิดพลาด กรุณาลองใหม่<br/><small>📞 082-172-9260</small>';
+      }
       result.style.display = 'block';
       btn.disabled = false;
       btn.textContent = '🎲 ส่งใบสมัครแข่งขัน';
-    }
+    }, function() {
+      result.className = 'form-result error';
+      result.innerHTML = '❌ ไม่สามารถเชื่อมต่อได้ กรุณาลองใหม่<br/><small>📞 082-172-9260</small>';
+      result.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = '🎲 ส่งใบสมัครแข่งขัน';
+    });
   }
 
-  // ป้องกัน iframe load event ตอนโหลดหน้า
-  function onFrameLoad() {
-    // ไม่ทำอะไร (iframe โหลด response ของ Apps Script)
+  // ===== JSONP Helper =====
+  function jsonpRequest(params, onSuccess, onError) {
+    var cbName = 'cb_' + Date.now();
+    params.callback = cbName;
+
+    var script = document.createElement('script');
+    script.src = APPS_SCRIPT_URL + '?' + new URLSearchParams(params).toString();
+
+    var timer = setTimeout(function() {
+      cleanup();
+      if (onError) onError();
+    }, 10000);
+
+    window[cbName] = function(data) {
+      clearTimeout(timer);
+      cleanup();
+      if (onSuccess) onSuccess(data);
+    };
+
+    function cleanup() {
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    script.onerror = function() {
+      clearTimeout(timer);
+      cleanup();
+      if (onError) onError();
+    };
+
+    document.head.appendChild(script);
   }
 
   function toBase64(file) {

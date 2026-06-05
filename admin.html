@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Splendor Tournament</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --gold: #f5c842;
+      --dark-gold: #c9972a;
+      --deep: #0d0d1a;
+      --card: #1a1a2e;
+      --green: #66bb6a;
+      --red: #ef5350;
+      --blue: #4fc3f7;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: var(--deep);
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+
+    /* ===== LOGIN ===== */
+    #loginScreen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .login-box {
+      background: var(--card);
+      border: 1px solid rgba(245,200,66,0.25);
+      border-radius: 20px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .login-box .icon { font-size: 3rem; margin-bottom: 16px; }
+    .login-box h1 { font-size: 1.4rem; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .login-box p  { color: #666; font-size: 0.9rem; margin-bottom: 32px; }
+
+    .login-box input[type="password"] {
+      width: 100%;
+      background: #0d0d1a;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 14px 18px;
+      color: #fff;
+      font-size: 1.1rem;
+      font-family: 'Sarabun', sans-serif;
+      outline: none;
+      letter-spacing: 4px;
+      text-align: center;
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
+    }
+
+    .login-box input[type="password"]:focus {
+      border-color: var(--gold);
+    }
+
+    .login-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--dark-gold), var(--gold));
+      color: #0d0d1a;
+      font-weight: 800;
+      font-size: 1rem;
+      font-family: 'Sarabun', sans-serif;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .login-btn:hover { opacity: 0.9; }
+
+    .login-error {
+      color: var(--red);
+      font-size: 0.9rem;
+      margin-top: 12px;
+      display: none;
+    }
+
+    /* ===== ADMIN PANEL ===== */
+    #adminPanel { display: none; }
+
+    .top-bar {
+      background: linear-gradient(135deg, #1a0a3d, var(--card));
+      border-bottom: 1px solid rgba(245,200,66,0.2);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .top-bar-left { display: flex; align-items: center; gap: 12px; }
+    .top-bar-left .logo { font-size: 1.3rem; font-weight: 800; color: var(--gold); }
+    .top-bar-left .sub  { font-size: 0.8rem; color: #666; }
+
+    .top-bar-right { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .btn-sm {
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      font-family: 'Sarabun', sans-serif;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.2s;
+    }
+
+    .btn-refresh { background: var(--blue); color: #0d0d1a; }
+    .btn-logout  { background: rgba(255,255,255,0.08); color: #aaa; border: 1px solid rgba(255,255,255,0.1); }
+    .btn-export  { background: var(--green); color: #0d0d1a; }
+    .btn-sm:hover { opacity: 0.85; }
+
+    .stats-bar {
+      display: flex;
+      gap: 16px;
+      padding: 20px 24px;
+      flex-wrap: wrap;
+      background: rgba(0,0,0,0.2);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .stat-chip {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px;
+      padding: 12px 20px;
+      text-align: center;
+      min-width: 120px;
+    }
+
+    .stat-chip .num  { font-size: 1.8rem; font-weight: 800; color: var(--gold); line-height: 1; }
+    .stat-chip .lbl  { font-size: 0.75rem; color: #666; margin-top: 4px; }
+
+    .search-bar {
+      padding: 16px 24px;
+      background: rgba(0,0,0,0.1);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .search-bar input {
+      width: 100%;
+      max-width: 400px;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 10px 16px;
+      color: #fff;
+      font-family: 'Sarabun', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .search-bar input:focus { border-color: var(--gold); }
+
+    .table-wrapper {
+      padding: 20px 24px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    thead th {
+      background: rgba(245,200,66,0.1);
+      color: var(--gold);
+      font-weight: 700;
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid rgba(245,200,66,0.2);
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: background 0.15s;
+    }
+
+    tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+    tbody td {
+      padding: 11px 14px;
+      color: #ccc;
+      vertical-align: middle;
+    }
+
+    tbody td:first-child { color: #666; font-weight: 700; }
+
+    .status-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .status-wait    { background: rgba(245,200,66,0.15); color: var(--gold); }
+    .status-ok      { background: rgba(102,187,106,0.15); color: var(--green); }
+    .status-reject  { background: rgba(239,83,80,0.15);  color: var(--red); }
+
+    .status-select {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #fff;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-family: 'Sarabun', sans-serif;
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+
+    #loadingMsg {
+      text-align: center;
+      padding: 60px 20px;
+      color: #555;
+      font-size: 1rem;
+    }
+
+    #emptyMsg {
+      display: none;
+      text-align: center;
+      padding: 60px 20px;
+      color: #444;
+    }
+
+    #emptyMsg .em-icon { font-size: 3rem; margin-bottom: 12px; }
+    #emptyMsg p { font-size: 0.95rem; }
+
+    @media (max-width: 600px) {
+      .top-bar, .stats-bar, .search-bar, .table-wrapper { padding-left: 16px; padding-right: 16px; }
+      .login-box { padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="icon">🎲</div>
+    <h1>Admin — Splendor Tournament</h1>
+    <p>กรุณากรอกรหัสผ่านเพื่อเข้าสู่ระบบ</p>
+    <input type="password" id="passInput" placeholder="••••••••••••"
+           onkeydown="if(event.key==='Enter') doLogin()" autofocus />
+    <button class="login-btn" onclick="doLogin()">เข้าสู่ระบบ</button>
+    <div class="login-error" id="loginError">รหัสผ่านไม่ถูกต้อง</div>
+  </div>
+</div>
+
+<!-- ===== ADMIN PANEL ===== -->
+<div id="adminPanel">
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <div>
+        <div class="logo">🎲 Splendor Tournament Admin</div>
+        <div class="sub">Load Dice Boardgame</div>
+      </div>
+    </div>
+    <div class="top-bar-right">
+      <button class="btn-sm btn-refresh" onclick="loadData()">🔄 รีเฟรช</button>
+      <button class="btn-sm btn-export"  onclick="exportCSV()">📥 Export CSV</button>
+      <button class="btn-sm btn-logout"  onclick="doLogout()">ออกจากระบบ</button>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-chip">
+      <div class="num" id="statTotal">-</div>
+      <div class="lbl">ผู้สมัครทั้งหมด</div>
+    </div>
+    <div class="stat-chip">
+      <div class="num" id="statWait" style="color:var(--gold);">-</div>
+      <div class="lbl">รอตรวจสอบ</div>
+    </div>
+    <div class="stat-chip">
+      <div class="num" id="statOk" style="color:var(--green);">-</div>
+      <div class="lbl">ยืนยันแล้ว</div>
+    </div>
+    <div class="stat-chip">
+      <div class="num" style="color:#aaa;">64</div>
+      <div class="lbl">ที่นั่งทั้งหมด</div>
+    </div>
+  </div>
+
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="🔍 ค้นหาชื่อ, เบอร์, อีเมล..."
+           oninput="filterTable()" />
+  </div>
+
+  <div class="table-wrapper">
+    <div id="loadingMsg">⏳ กำลังโหลดข้อมูล...</div>
+    <div id="emptyMsg">
+      <div class="em-icon">📋</div>
+      <p>ยังไม่มีผู้สมัคร</p>
+    </div>
+    <table id="regTable" style="display:none;">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>วันที่/เวลา</th>
+          <th>ชื่อ-นามสกุล</th>
+          <th>ชื่อเล่น</th>
+          <th>เบอร์โทร</th>
+          <th>อีเมล</th>
+          <th>สลิป</th>
+          <th>สถานะ</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYDukLsu_Oy0WOLjwlfFaC-NlH0Nv9WrJ1_FJznIo2x4setl4NXaiCrky9hTK3InDd/exec";
+  var ADMIN_PASS = "loaddice123";
+  var allRows   = [];
+
+  // ===== AUTH =====
+  function doLogin() {
+    var pass = document.getElementById('passInput').value;
+    if (pass === ADMIN_PASS) {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('adminPanel').style.display  = 'block';
+      loadData();
+    } else {
+      document.getElementById('loginError').style.display = 'block';
+      document.getElementById('passInput').value = '';
+      document.getElementById('passInput').focus();
+    }
+  }
+
+  function doLogout() {
+    document.getElementById('adminPanel').style.display  = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('passInput').value = '';
+    document.getElementById('loginError').style.display = 'none';
+  }
+
+  // ===== LOAD DATA =====
+  function loadData() {
+    document.getElementById('loadingMsg').style.display = 'block';
+    document.getElementById('regTable').style.display   = 'none';
+    document.getElementById('emptyMsg').style.display   = 'none';
+
+    jsonpRequest({ action: 'getAll', adminKey: ADMIN_PASS }, function(data) {
+      document.getElementById('loadingMsg').style.display = 'none';
+      if (data && data.rows) {
+        allRows = data.rows;
+        renderTable(allRows);
+        updateStats(allRows);
+      }
+    }, function() {
+      document.getElementById('loadingMsg').innerHTML = '❌ โหลดข้อมูลไม่สำเร็จ กด รีเฟรช ลองใหม่';
+    });
+  }
+
+  function renderTable(rows) {
+    var tbody = document.getElementById('tableBody');
+    tbody.innerHTML = '';
+
+    if (!rows || rows.length === 0) {
+      document.getElementById('emptyMsg').style.display = 'block';
+      document.getElementById('regTable').style.display = 'none';
+      return;
+    }
+
+    document.getElementById('regTable').style.display = 'table';
+    rows.forEach(function(r) {
+      var slipCell = r.slip && r.slip !== '(ไม่มีสลิป)'
+        ? '<a href="' + r.slip + '" target="_blank" style="color:var(--blue);">ดูสลิป</a>'
+        : '<span style="color:#444;">-</span>';
+
+      var statusClass = r.status === 'ยืนยันแล้ว' ? 'status-ok'
+                      : r.status === 'ไม่ผ่าน'    ? 'status-reject'
+                      : 'status-wait';
+
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + (r.num || '') + '</td>' +
+        '<td style="white-space:nowrap;font-size:0.82rem;">' + (r.datetime || '') + '</td>' +
+        '<td><strong style="color:#fff;">' + (r.fullname || '') + '</strong></td>' +
+        '<td>' + (r.nickname || '') + '</td>' +
+        '<td>' + (r.phone || '') + '</td>' +
+        '<td style="font-size:0.85rem;">' + (r.email || '') + '</td>' +
+        '<td>' + slipCell + '</td>' +
+        '<td>' +
+          '<select class="status-select" onchange="updateStatus(this,\'' + r.num + '\')">' +
+            '<option ' + (r.status==='รอตรวจสอบ'?'selected':'') + '>รอตรวจสอบ</option>' +
+            '<option ' + (r.status==='ยืนยันแล้ว'?'selected':'') + '>ยืนยันแล้ว</option>' +
+            '<option ' + (r.status==='ไม่ผ่าน'?'selected':'') + '>ไม่ผ่าน</option>' +
+          '</select>' +
+        '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function updateStats(rows) {
+    var wait = rows.filter(function(r){ return r.status === 'รอตรวจสอบ'; }).length;
+    var ok   = rows.filter(function(r){ return r.status === 'ยืนยันแล้ว'; }).length;
+    document.getElementById('statTotal').textContent = rows.length;
+    document.getElementById('statWait').textContent  = wait;
+    document.getElementById('statOk').textContent    = ok;
+  }
+
+  // ===== FILTER =====
+  function filterTable() {
+    var q = document.getElementById('searchInput').value.toLowerCase();
+    if (!q) { renderTable(allRows); return; }
+    var filtered = allRows.filter(function(r) {
+      return (r.fullname||'').toLowerCase().includes(q)
+          || (r.nickname||'').toLowerCase().includes(q)
+          || (r.phone||'').includes(q)
+          || (r.email||'').toLowerCase().includes(q);
+    });
+    renderTable(filtered);
+  }
+
+  // ===== UPDATE STATUS =====
+  function updateStatus(sel, rowNum) {
+    var newStatus = sel.value;
+    jsonpRequest({
+      action:   'updateStatus',
+      adminKey:  ADMIN_PASS,
+      row:       rowNum,
+      status:    newStatus
+    }, function(data) {
+      if (data && data.success) {
+        var r = allRows.find(function(x){ return String(x.num) === String(rowNum); });
+        if (r) r.status = newStatus;
+        updateStats(allRows);
+      }
+    }, null);
+  }
+
+  // ===== EXPORT CSV =====
+  function exportCSV() {
+    if (!allRows.length) { alert('ไม่มีข้อมูล'); return; }
+    var header = ['ลำดับ','วันที่/เวลา','ชื่อ-นามสกุล','ชื่อเล่น','เบอร์','อีเมล','สลิป','สถานะ'];
+    var rows   = allRows.map(function(r) {
+      return [r.num, r.datetime, r.fullname, r.nickname, r.phone, r.email, r.slip, r.status]
+        .map(function(v){ return '"' + String(v||'').replace(/"/g,'""') + '"'; }).join(',');
+    });
+    var csv  = '﻿' + header.join(',') + '\n' + rows.join('\n');
+    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    var a    = document.createElement('a');
+    a.href   = URL.createObjectURL(blob);
+    a.download = 'splendor_registrations.csv';
+    a.click();
+  }
+
+  // ===== JSONP =====
+  function jsonpRequest(params, onSuccess, onError) {
+    var cbName  = 'cb_' + Date.now();
+    params.callback = cbName;
+    var script  = document.createElement('script');
+    script.src  = APPS_SCRIPT_URL + '?' + new URLSearchParams(params).toString();
+    var timer   = setTimeout(function(){ cleanup(); if(onError) onError(); }, 12000);
+    window[cbName] = function(data) { clearTimeout(timer); cleanup(); if(onSuccess) onSuccess(data); };
+    function cleanup() { delete window[cbName]; if(script.parentNode) script.parentNode.removeChild(script); }
+    script.onerror = function() { clearTimeout(timer); cleanup(); if(onError) onError(); };
+    document.head.appendChild(script);
+  }
+</script>
+</body>
+</html>
