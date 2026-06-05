@@ -883,7 +883,7 @@
   // แทนที่ URL นี้ด้วย Web App URL จาก Google Apps Script ของคุณ
   // ดูวิธีที่ไฟล์ SETUP_GUIDE.md
   // ============================================================
-  const APPS_SCRIPT_URL = "YOUR_APPS_SCRIPT_WEB_APP_URL";
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwaPFrJjllYAPnZUTw5k-G9rculHfuM8VLrhLbykpCWxJYxqR1MkMs7z7Jdj6eJVRfN/exec";
 
   // ===== COUNTDOWN =====
   function updateCountdown() {
@@ -937,6 +937,14 @@
     const btn    = document.getElementById('submitBtn');
     const result = document.getElementById('formResult');
 
+    // ตรวจสอบว่าตั้งค่า URL แล้วหรือยัง
+    if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('YOUR_')) {
+      result.className = 'form-result error';
+      result.innerHTML = '⚙️ ยังไม่ได้ตั้งค่า Apps Script URL — กรุณาติดต่อทีมงาน';
+      result.style.display = 'block';
+      return;
+    }
+
     btn.disabled = true;
     btn.textContent = '⏳ กำลังส่งข้อมูล...';
     result.style.display = 'none';
@@ -947,6 +955,9 @@
       let   slipName   = '';
 
       if (slipFile) {
+        if (slipFile.size > 5 * 1024 * 1024) {
+          throw new Error('ไฟล์สลิปใหญ่เกิน 5MB กรุณาบีบอัดภาพก่อน');
+        }
         slipBase64 = await toBase64(slipFile);
         slipName   = slipFile.name;
       }
@@ -960,23 +971,26 @@
         slipName
       };
 
-      const res  = await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
+      // ใช้ no-cors เพื่อหลีกเลี่ยง CORS ของ Apps Script
+      // (ข้อมูลจะถูกส่งถึง Sheet แต่เราไม่อ่าน response กลับ)
+      await fetch(APPS_SCRIPT_URL, {
+        method:   'POST',
+        mode:     'no-cors',
+        redirect: 'follow',
+        body:     JSON.stringify(payload)
       });
-      const data = await res.json();
 
-      if (data.success) {
-        result.className = 'form-result success';
-        result.innerHTML = '✅ ส่งใบสมัครสำเร็จ! ทีมงานจะติดต่อยืนยันภายใน 24 ชั่วโมง 🎲';
-        document.getElementById('regForm').reset();
-        document.getElementById('slipPreview').style.display = 'none';
-      } else {
-        throw new Error(data.message || 'เกิดข้อผิดพลาด');
-      }
+      // ถือว่าสำเร็จ (no-cors ไม่สามารถอ่าน response ได้)
+      result.className = 'form-result success';
+      result.innerHTML = `✅ ส่งใบสมัครสำเร็จ! ทีมงานจะตรวจสอบและยืนยันภายใน 24 ชั่วโมง 🎲<br/>
+        <small style="color:#aaa;margin-top:8px;display:block;">
+          หากไม่ได้รับการยืนยัน กรุณาติดต่อ <strong>082-172-9260</strong> หรือ FB: Load dice boardgame
+        </small>`;
+      document.getElementById('regForm').reset();
+      document.getElementById('slipPreview').style.display = 'none';
     } catch (err) {
       result.className = 'form-result error';
-      result.innerHTML = '❌ ส่งข้อมูลไม่สำเร็จ: ' + err.message + '<br/><small>กรุณาลองใหม่หรือติดต่อทีมงาน</small>';
+      result.innerHTML = '❌ ' + err.message + '<br/><small>📞 ติดต่อทีมงาน: 082-172-9260</small>';
     }
 
     result.style.display = 'block';
