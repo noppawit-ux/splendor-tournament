@@ -389,9 +389,10 @@
 
     document.getElementById('regTable').style.display = 'table';
     rows.forEach(function(r) {
-      var slipCell = r.slip && r.slip !== '(ไม่มีสลิป)'
-        ? '<a href="' + r.slip + '" target="_blank" style="color:var(--blue);">ดูสลิป</a>'
-        : '<span style="color:#444;">-</span>';
+      var hasSlip = r.slip && r.slip !== '(ไม่มีสลิป)' && r.slip !== '(รอสลิป)' && !r.slip.includes('(');
+    var slipCell = hasSlip
+        ? '<a href="' + r.slip + '" target="_blank" style="color:var(--blue);font-weight:700;">📎 ดูสลิป</a>'
+        : '<span style="color:#444;font-size:0.8rem;">' + (r.slip||'-') + '</span>';
 
       var statusClass = r.status === 'ยืนยันแล้ว' ? 'status-ok'
                       : r.status === 'ไม่ผ่าน'    ? 'status-reject'

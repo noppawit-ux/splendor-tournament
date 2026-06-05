@@ -537,6 +537,15 @@
 </head>
 <body>
 
+<!-- ===== NAV ===== -->
+<nav style="background:linear-gradient(135deg,#1a0a3d,#1a1a2e);border-bottom:1px solid rgba(245,200,66,0.2);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;position:sticky;top:0;z-index:100;">
+  <span style="font-family:'Cinzel',serif;font-size:1rem;font-weight:700;color:var(--gold);">🎲 Splendor Tournament</span>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;">
+    <a href="index.html" style="padding:7px 16px;border-radius:8px;font-size:0.85rem;font-weight:600;text-decoration:none;background:rgba(245,200,66,0.15);color:var(--gold);">📝 ลงทะเบียน</a>
+    <a href="status.html" style="padding:7px 16px;border-radius:8px;font-size:0.85rem;font-weight:600;text-decoration:none;color:#aaa;">🔍 ตรวจสอบสถานะ</a>
+  </div>
+</nav>
+
 <!-- ===== HERO ===== -->
 <div class="hero">
   <div class="gem-row">
@@ -817,12 +826,21 @@
 
       <div class="form-divider"></div>
 
-      <!-- แจ้งเตือนส่งสลิปแยก -->
-      <div style="background:rgba(79,195,247,0.08);border:1px solid rgba(79,195,247,0.25);border-radius:12px;padding:18px 20px;margin-bottom:24px;font-size:0.9rem;color:#aaa;line-height:1.7;">
-        📎 <strong style="color:#fff;">ส่งสลิปการโอนเงินแยกต่างหาก</strong><br/>
-        หลังกรอกฟอร์มแล้ว ส่งสลิปมาที่:<br/>
-        &nbsp;&nbsp;📘 Facebook: <strong style="color:var(--gem-blue);">Load dice boardgame</strong><br/>
-        &nbsp;&nbsp;📞 โทร/LINE: <strong style="color:var(--gem-blue);">082-172-9260</strong>
+      <div class="form-group">
+        <label>อัปโหลดสลิปการโอนเงิน <span class="req">*</span></label>
+        <div class="slip-upload-area" id="uploadArea">
+          <input type="file" id="slipFile" accept="image/*" required onchange="previewSlip(this)" />
+          <div class="upload-icon" id="uploadIcon">📎</div>
+          <div class="upload-text" id="uploadText">
+            <strong>คลิกหรือลากไฟล์มาวาง</strong><br/>
+            รองรับ JPG, PNG (ขนาดไม่เกิน 5MB)
+          </div>
+          <div class="slip-preview" id="slipPreview">
+            <img id="previewImg" src="" alt="preview"/>
+            <div class="slip-name" id="slipFileName"></div>
+          </div>
+        </div>
+        <div id="uploadProgress" style="display:none;margin-top:10px;font-size:0.85rem;color:var(--gem-blue);">⏳ กำลังอัปโหลดสลิป...</div>
       </div>
 
       <button type="submit" class="submit-btn" id="submitBtn">
@@ -922,89 +940,153 @@
     }
   }
 
-  // ===== SUBMIT FORM via JSONP (ไม่มี CORS ปัญหา) =====
-  function submitForm(e) {
-    e.preventDefault();
-    const btn    = document.getElementById('submitBtn');
-    const result = document.getElementById('formResult');
+  // ============================================================
+  // ImgBB API Key — รับฟรีได้ที่ https://api.imgbb.com
+  // ============================================================
+  var IMGBB_KEY = "ccf694b534b880618eb979ec65251b41";
 
-    const fullname = document.getElementById('fullname').value.trim();
-    const nickname = document.getElementById('nickname').value.trim();
-    const phone    = document.getElementById('phone').value.trim();
-    const email    = document.getElementById('email').value.trim();
+  // ===== SLIP PREVIEW =====
+  function previewSlip(input) {
+    var file = input.files[0];
+    if (!file) return;
+    document.getElementById('slipFileName').textContent = file.name + ' (' + (file.size/1024).toFixed(1) + ' KB)';
+    if (file.type.startsWith('image/')) {
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        document.getElementById('previewImg').src = ev.target.result;
+        document.getElementById('slipPreview').style.display = 'block';
+        document.getElementById('uploadIcon').style.display  = 'none';
+        document.getElementById('uploadText').style.display  = 'none';
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  // ===== COMPRESS IMAGE =====
+  function compressImage(file) {
+    return new Promise(function(resolve) {
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        var img = new Image();
+        img.onload = function() {
+          var canvas = document.createElement('canvas');
+          var MAX = 1200;
+          var w = img.width, h = img.height;
+          if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          canvas.toBlob(function(blob) { resolve(blob); }, 'image/jpeg', 0.75);
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // ===== UPLOAD TO IMGBB =====
+  async function uploadSlip(file) {
+    if (IMGBB_KEY === 'YOUR_IMGBB_API_KEY') {
+      return '(กรุณาส่งสลิปทาง FB: Load dice boardgame)';
+    }
+    var compressed = await compressImage(file);
+    var formData   = new FormData();
+    formData.append('image', compressed, 'slip.jpg');
+    var res  = await fetch('https://api.imgbb.com/1/upload?key=' + IMGBB_KEY, {
+      method: 'POST', body: formData
+    });
+    var data = await res.json();
+    if (data.success) return data.data.url;
+    throw new Error('อัปโหลดสลิปไม่สำเร็จ');
+  }
+
+  // ===== SUBMIT FORM =====
+  async function submitForm(e) {
+    e.preventDefault();
+    var btn    = document.getElementById('submitBtn');
+    var result = document.getElementById('formResult');
+    var prog   = document.getElementById('uploadProgress');
+
+    var fullname = document.getElementById('fullname').value.trim();
+    var nickname = document.getElementById('nickname').value.trim();
+    var phone    = document.getElementById('phone').value.trim();
+    var email    = document.getElementById('email').value.trim();
+    var slipFile = document.getElementById('slipFile').files[0];
 
     if (!fullname || !nickname || !phone || !email) {
       result.className = 'form-result error';
       result.innerHTML = '❌ กรุณากรอกข้อมูลให้ครบทุกช่อง';
-      result.style.display = 'block';
-      return;
+      result.style.display = 'block'; return;
+    }
+    if (!slipFile) {
+      result.className = 'form-result error';
+      result.innerHTML = '❌ กรุณาอัปโหลดสลิปการโอนเงิน';
+      result.style.display = 'block'; return;
+    }
+    if (slipFile.size > 5 * 1024 * 1024) {
+      result.className = 'form-result error';
+      result.innerHTML = '❌ ไฟล์ใหญ่เกิน 5MB';
+      result.style.display = 'block'; return;
     }
 
     btn.disabled = true;
     btn.textContent = '⏳ กำลังส่งข้อมูล...';
     result.style.display = 'none';
 
+    // Step 1: upload slip
+    var slipUrl = '';
+    try {
+      prog.style.display = 'block';
+      btn.textContent = '📤 กำลังอัปโหลดสลิป...';
+      slipUrl = await uploadSlip(slipFile);
+      prog.style.display = 'none';
+    } catch (err) {
+      slipUrl = '(อัปโหลดไม่สำเร็จ — ส่งทาง FB)';
+      prog.style.display = 'none';
+    }
+
+    // Step 2: register via JSONP
+    btn.textContent = '💾 กำลังบันทึกข้อมูล...';
     jsonpRequest({
-      action:   'register',
-      fullname:  fullname,
-      nickname:  nickname,
-      phone:     phone,
-      email:     email
+      action: 'register',
+      fullname: fullname, nickname: nickname,
+      phone: phone, email: email, slipUrl: slipUrl
     }, function(data) {
       if (data && data.success) {
         result.className = 'form-result success';
-        result.innerHTML = '✅ ลงทะเบียนสำเร็จ! (ลำดับที่ ' + (data.row || '') + ')<br/>'
+        result.innerHTML = '✅ ลงทะเบียนสำเร็จ! ลำดับที่ <strong>' + (data.row || '?') + '</strong><br/>'
           + '<small style="color:#aaa;margin-top:8px;display:block;">'
-          + 'อย่าลืมส่งสลิปทาง <strong>FB: Load dice boardgame</strong> หรือ 082-172-9260 ด้วยนะครับ</small>';
-        ['fullname','nickname','phone','email'].forEach(function(id) {
-          document.getElementById(id).value = '';
-        });
+          + 'ตรวจสอบสถานะได้ที่ <a href="status.html" style="color:var(--gem-blue);">หน้าตรวจสอบสถานะ</a><br/>'
+          + 'ทีมงานจะยืนยันภายใน 24 ชั่วโมง 🎲</small>';
+        document.getElementById('regForm').reset();
+        document.getElementById('slipPreview').style.display = 'none';
+        document.getElementById('uploadIcon').style.display  = '';
+        document.getElementById('uploadText').style.display  = '';
       } else {
         result.className = 'form-result error';
-        result.innerHTML = '❌ เกิดข้อผิดพลาด กรุณาลองใหม่<br/><small>📞 082-172-9260</small>';
+        result.innerHTML = '❌ ' + ((data && data.message) || 'เกิดข้อผิดพลาด') + '<br/><small>📞 082-172-9260</small>';
       }
       result.style.display = 'block';
       btn.disabled = false;
       btn.textContent = '🎲 ส่งใบสมัครแข่งขัน';
     }, function() {
       result.className = 'form-result error';
-      result.innerHTML = '❌ ไม่สามารถเชื่อมต่อได้ กรุณาลองใหม่<br/><small>📞 082-172-9260</small>';
+      result.innerHTML = '❌ เชื่อมต่อไม่ได้ กรุณาลองใหม่<br/><small>📞 082-172-9260</small>';
       result.style.display = 'block';
       btn.disabled = false;
       btn.textContent = '🎲 ส่งใบสมัครแข่งขัน';
     });
   }
 
-  // ===== JSONP Helper =====
+  // ===== JSONP =====
   function jsonpRequest(params, onSuccess, onError) {
-    var cbName = 'cb_' + Date.now();
-    params.callback = cbName;
-
+    var cb = 'cb_' + Date.now();
+    params.callback = cb;
     var script = document.createElement('script');
     script.src = APPS_SCRIPT_URL + '?' + new URLSearchParams(params).toString();
-
-    var timer = setTimeout(function() {
-      cleanup();
-      if (onError) onError();
-    }, 10000);
-
-    window[cbName] = function(data) {
-      clearTimeout(timer);
-      cleanup();
-      if (onSuccess) onSuccess(data);
-    };
-
-    function cleanup() {
-      delete window[cbName];
-      if (script.parentNode) script.parentNode.removeChild(script);
-    }
-
-    script.onerror = function() {
-      clearTimeout(timer);
-      cleanup();
-      if (onError) onError();
-    };
-
+    var timer = setTimeout(function(){ cleanup(); if(onError) onError(); }, 12000);
+    window[cb] = function(d){ clearTimeout(timer); cleanup(); if(onSuccess) onSuccess(d); };
+    function cleanup(){ delete window[cb]; if(script.parentNode) script.parentNode.removeChild(script); }
+    script.onerror = function(){ clearTimeout(timer); cleanup(); if(onError) onError(); };
     document.head.appendChild(script);
   }
 
