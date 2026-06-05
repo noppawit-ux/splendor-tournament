@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Splendor Tournament 2569 | แข่งขันบอร์ดเกมพ่อค้าเพชร</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700;800&family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --gold: #f5c842;
+      --dark-gold: #c9972a;
+      --deep: #0d0d1a;
+      --card-bg: #1a1a2e;
+      --gem-blue: #4fc3f7;
+      --gem-green: #66bb6a;
+      --gem-red: #ef5350;
+      --gem-black: #90a4ae;
+      --gem-white: #f3e5f5;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: var(--deep);
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 80px 20px 60px;
+      text-align: center;
+      background: radial-gradient(ellipse at top, #1a0a3d 0%, #0d0d1a 70%);
+    }
+
+    .gem-row {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+
+    .gem {
+      width: 44px;
+      height: 52px;
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: inline-block;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .gem:nth-child(1) { background: var(--gem-blue);  animation-delay: 0s; }
+    .gem:nth-child(2) { background: var(--gem-green); animation-delay: 0.4s; }
+    .gem:nth-child(3) { background: var(--gem-red);   animation-delay: 0.8s; }
+    .gem:nth-child(4) { background: var(--gem-black); animation-delay: 1.2s; }
+    .gem:nth-child(5) { background: var(--gem-white); animation-delay: 1.6s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--dark-gold), var(--gold));
+      color: #0d0d1a;
+      font-weight: 800;
+      font-size: 0.85rem;
+      letter-spacing: 3px;
+      padding: 6px 20px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+
+    .hero-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2.4rem, 7vw, 5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #fff 0%, var(--gold) 60%, var(--dark-gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
+
+    .hero-sub {
+      font-size: 1.25rem;
+      color: #bbb;
+      margin-bottom: 36px;
+    }
+
+    .prize-banner {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(245,200,66,0.15), rgba(201,151,42,0.1));
+      border: 2px solid var(--gold);
+      border-radius: 16px;
+      padding: 20px 36px;
+      margin-bottom: 48px;
+    }
+
+    .prize-amount {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .prize-label {
+      font-size: 0.95rem;
+      color: #aaa;
+      line-height: 1.4;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--dark-gold), var(--gold));
+      color: #0d0d1a;
+      font-weight: 800;
+      font-size: 1.1rem;
+      padding: 16px 40px;
+      border-radius: 100px;
+      text-decoration: none;
+      box-shadow: 0 8px 32px rgba(245,200,66,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(245,200,66,0.6);
+    }
+
+    .btn-secondary {
+      display: inline-block;
+      border: 2px solid rgba(255,255,255,0.3);
+      color: #fff;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 14px 32px;
+      border-radius: 100px;
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--gold);
+      background: rgba(245,200,66,0.1);
+    }
+
+    /* ===== SECTION ===== */
+    section { padding: 72px 20px; max-width: 1100px; margin: 0 auto; }
+
+    .section-tag {
+      font-size: 0.8rem;
+      letter-spacing: 3px;
+      font-weight: 700;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 32px;
+    }
+
+    /* ===== INFO CARDS ===== */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-bottom: 48px;
+    }
+
+    .info-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 28px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .info-card:hover {
+      border-color: rgba(245,200,66,0.3);
+      transform: translateY(-4px);
+    }
+
+    .info-icon { font-size: 2rem; margin-bottom: 12px; }
+    .info-card-label { font-size: 0.8rem; color: #888; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+    .info-card-value { font-size: 1.05rem; font-weight: 700; color: #fff; line-height: 1.5; }
+    .info-card-value span { color: var(--gold); }
+
+    /* ===== PRIZES ===== */
+    .prizes-wrapper { background: #111122; padding: 72px 0; margin: 0 -20px; }
+    .prizes-inner { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+    .prize-cards {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .prize-card {
+      flex: 1;
+      min-width: 200px;
+      max-width: 280px;
+      border-radius: 20px;
+      padding: 36px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .prize-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      padding: 2px;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+    }
+
+    .prize-card.gold { background: linear-gradient(160deg, #2a1f00, #1a1500); }
+    .prize-card.gold::before { background: linear-gradient(135deg, var(--gold), var(--dark-gold)); }
+
+    .prize-card.silver { background: linear-gradient(160deg, #1a1a1a, #111); }
+    .prize-card.silver::before { background: linear-gradient(135deg, #c0c0c0, #888); }
+
+    .prize-card.bronze { background: linear-gradient(160deg, #1a0f0a, #100c00); }
+    .prize-card.bronze::before { background: linear-gradient(135deg, #cd7f32, #8b4513); }
+
+    .prize-rank { font-size: 2.5rem; margin-bottom: 8px; }
+    .prize-pos { font-size: 0.9rem; color: #888; letter-spacing: 2px; margin-bottom: 16px; }
+    .prize-val { font-size: 2rem; font-weight: 800; }
+    .prize-card.gold .prize-val { color: var(--gold); }
+    .prize-card.silver .prize-val { color: #c0c0c0; }
+    .prize-card.bronze .prize-val { color: #cd7f32; }
+
+    /* ===== TOURNAMENT ===== */
+    .rules-list {
+      list-style: none;
+      display: grid;
+      gap: 16px;
+    }
+
+    .rules-list li {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 20px;
+      border-left: 4px solid var(--gold);
+    }
+
+    .rules-list .step-num {
+      background: linear-gradient(135deg, var(--dark-gold), var(--gold));
+      color: #0d0d1a;
+      font-weight: 800;
+      font-size: 0.9rem;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .rules-list .step-text { font-size: 1rem; color: #ccc; line-height: 1.6; }
+    .rules-list .step-text strong { color: #fff; }
+
+    /* ===== ACTIVITIES ===== */
+    .activity-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .activity-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 28px;
+      border-top: 3px solid;
+    }
+
+    .activity-card.blue  { border-color: var(--gem-blue); }
+    .activity-card.green { border-color: var(--gem-green); }
+
+    .activity-card .ac-icon { font-size: 2.4rem; margin-bottom: 14px; }
+    .activity-card .ac-title { font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+    .activity-card .ac-desc { font-size: 0.95rem; color: #999; line-height: 1.6; }
+    .activity-card .ac-badge {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 4px 12px;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .activity-card.blue  .ac-badge { background: rgba(79,195,247,0.15); color: var(--gem-blue); }
+    .activity-card.green .ac-badge { background: rgba(102,187,106,0.15); color: var(--gem-green); }
+
+    /* ===== PAYMENT ===== */
+    .payment-box {
+      background: linear-gradient(135deg, rgba(245,200,66,0.08), rgba(201,151,42,0.04));
+      border: 1px solid rgba(245,200,66,0.25);
+      border-radius: 20px;
+      padding: 40px;
+    }
+
+    .payment-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 24px;
+      margin-top: 32px;
+    }
+
+    .pay-step {
+      text-align: center;
+    }
+
+    .pay-step-num {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--dark-gold), var(--gold));
+      color: #0d0d1a;
+      font-weight: 800;
+      font-size: 1.2rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+    }
+
+    .pay-step-title { font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .pay-step-desc { font-size: 0.9rem; color: #999; line-height: 1.5; }
+
+    /* ===== FORM SECTION ===== */
+    .form-section-wrapper { background: #111122; padding: 72px 0; margin: 0 -20px; }
+    .form-inner { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+
+    .reg-form {
+      background: var(--card-bg);
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(245,200,66,0.2);
+      padding: 40px;
+    }
+
+    .form-group { margin-bottom: 24px; }
+
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #ccc;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group label .req { color: var(--gem-red); margin-left: 4px; }
+
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="tel"] {
+      width: 100%;
+      background: #0d0d1a;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 14px 18px;
+      color: #fff;
+      font-size: 1rem;
+      font-family: 'Sarabun', sans-serif;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(245,200,66,0.12);
+    }
+
+    .slip-upload-area {
+      border: 2px dashed rgba(245,200,66,0.3);
+      border-radius: 12px;
+      padding: 32px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+      background: rgba(245,200,66,0.03);
+    }
+
+    .slip-upload-area:hover, .slip-upload-area.dragover {
+      border-color: var(--gold);
+      background: rgba(245,200,66,0.07);
+    }
+
+    .slip-upload-area input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+
+    .slip-upload-area .upload-icon { font-size: 2.4rem; margin-bottom: 10px; }
+    .slip-upload-area .upload-text { color: #888; font-size: 0.95rem; }
+    .slip-upload-area .upload-text strong { color: var(--gold); }
+    .slip-preview { display: none; margin-top: 16px; }
+    .slip-preview img { max-width: 100%; max-height: 200px; border-radius: 8px; object-fit: contain; }
+    .slip-preview .slip-name { font-size: 0.85rem; color: #888; margin-top: 8px; }
+
+    .form-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 28px 0; }
+
+    .form-notice {
+      background: rgba(245,200,66,0.07);
+      border: 1px solid rgba(245,200,66,0.2);
+      border-radius: 10px;
+      padding: 16px 20px;
+      font-size: 0.9rem;
+      color: #aaa;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    .form-notice strong { color: var(--gold); }
+
+    .submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--dark-gold), var(--gold));
+      color: #0d0d1a;
+      font-weight: 800;
+      font-size: 1.1rem;
+      font-family: 'Sarabun', sans-serif;
+      padding: 18px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.2s;
+      box-shadow: 0 8px 32px rgba(245,200,66,0.3);
+    }
+
+    .submit-btn:hover:not(:disabled) { transform: translateY(-2px); opacity: 0.92; }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .form-result {
+      display: none;
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .form-result.success { background: rgba(102,187,106,0.15); border: 1px solid var(--gem-green); color: var(--gem-green); }
+    .form-result.error   { background: rgba(239,83,80,0.15);  border: 1px solid var(--gem-red);   color: var(--gem-red); }
+
+    /* ===== FOOTER ===== */
+    footer {
+      text-align: center;
+      padding: 48px 20px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      color: #555;
+      font-size: 0.9rem;
+      line-height: 1.8;
+    }
+
+    footer strong { color: #888; }
+
+    /* ===== COUNTDOWN ===== */
+    .countdown-bar {
+      background: linear-gradient(135deg, #1a0a3d, #0d0d1a);
+      border-top: 1px solid rgba(245,200,66,0.2);
+      border-bottom: 1px solid rgba(245,200,66,0.2);
+      padding: 28px 20px;
+      text-align: center;
+    }
+
+    .countdown-label { font-size: 0.85rem; color: #888; letter-spacing: 2px; margin-bottom: 14px; }
+
+    .countdown-digits {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .cd-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .cd-num {
+      background: var(--card-bg);
+      border: 1px solid rgba(245,200,66,0.25);
+      border-radius: 10px;
+      padding: 10px 20px;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--gold);
+      min-width: 80px;
+      font-family: 'Cinzel', serif;
+    }
+
+    .cd-label { font-size: 0.75rem; color: #666; letter-spacing: 1px; }
+
+    /* divider */
+    .divider { width: 60px; height: 3px; background: linear-gradient(90deg, var(--dark-gold), var(--gold)); border-radius: 2px; margin: 0 auto 32px; }
+
+    @media (max-width: 600px) {
+      .prize-banner { flex-direction: column; gap: 6px; }
+      .payment-box { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<div class="hero">
+  <div class="gem-row">
+    <div class="gem"></div>
+    <div class="gem"></div>
+    <div class="gem"></div>
+    <div class="gem"></div>
+    <div class="gem"></div>
+  </div>
+  <div class="hero-badge">Board Game Tournament 2569</div>
+  <p style="font-size:1rem;color:var(--gold);font-weight:700;margin-bottom:10px;letter-spacing:1px;">✦ เชิญเหล่านักค้ามาประลองฝีมือ! ✦</p>
+  <h1 class="hero-title">SPLENDOR<br/>พ่อค้าเพชร</h1>
+  <p class="hero-sub">การแข่งขันบอร์ดเกม <strong style="color:#fff">Splendor</strong> ชิงเงินรางวัล<br/>
+  <span style="font-size:0.95rem;color:#888;">Tops Plaza หนองหาน จ.อุดรธานี &nbsp;|&nbsp; Central Retail</span></p>
+
+  <div class="prize-banner">
+    <div>
+      <div class="prize-amount">13,000+</div>
+      <div style="font-size:0.8rem;color:#888;">บาท</div>
+    </div>
+    <div style="width:1px;height:50px;background:rgba(255,255,255,0.1);"></div>
+    <div class="prize-label">
+      เงินรางวัลมูลค่ารวมกว่า<br/>
+      <strong style="color:var(--gold);">13,000 บาท</strong><br/>
+      พร้อมของรางวัลอื่นๆ อีกมากมาย
+    </div>
+  </div>
+
+  <div class="cta-buttons">
+    <a href="#register" class="btn-primary">สมัครเลย! 50 บาท</a>
+    <a href="#rules" class="btn-secondary">ดูกติกาการแข่งขัน</a>
+  </div>
+</div>
+
+<!-- ===== COUNTDOWN ===== -->
+<div class="countdown-bar">
+  <div class="countdown-label">ปิดรับสมัคร 27 มิถุนายน 2569 &nbsp;|&nbsp; เหลือเวลาอีก</div>
+  <div class="countdown-digits" id="countdown">
+    <div class="cd-unit"><div class="cd-num" id="cd-days">--</div><div class="cd-label">วัน</div></div>
+    <div class="cd-unit"><div class="cd-num" id="cd-hours">--</div><div class="cd-label">ชั่วโมง</div></div>
+    <div class="cd-unit"><div class="cd-num" id="cd-mins">--</div><div class="cd-label">นาที</div></div>
+    <div class="cd-unit"><div class="cd-num" id="cd-secs">--</div><div class="cd-label">วินาที</div></div>
+  </div>
+</div>
+
+<!-- ===== EVENT INFO ===== -->
+<section>
+  <div class="section-tag">รายละเอียดงาน</div>
+  <h2 class="section-title">ข้อมูลการแข่งขัน</h2>
+  <div class="divider"></div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-icon">📅</div>
+      <div class="info-card-label">รับสมัคร</div>
+      <div class="info-card-value">วันนี้ – <span>27 มิถุนายน 2569</span></div>
+    </div>
+    <div class="info-card">
+      <div class="info-icon">🏟️</div>
+      <div class="info-card-label">วันแข่งขัน</div>
+      <div class="info-card-value"><span>27 มิถุนายน 2569</span><br/>เวลา 13.00 น. เป็นต้นไป</div>
+    </div>
+    <div class="info-card">
+      <div class="info-icon">📍</div>
+      <div class="info-card-label">สถานที่จัดงาน</div>
+      <div class="info-card-value"><span>Tops Plaza</span><br/>หนองหาน จ.อุดรธานี</div>
+    </div>
+    <div class="info-card">
+      <div class="info-icon">👥</div>
+      <div class="info-card-label">จำนวนที่รับ</div>
+      <div class="info-card-value">รับจำนวนจำกัด<br/><span>เพียง 64 ที่นั่งเท่านั้น!</span></div>
+    </div>
+    <div class="info-card">
+      <div class="info-icon">💰</div>
+      <div class="info-card-label">ค่าสมัคร</div>
+      <div class="info-card-value"><span>50 บาท</span><br/>(โอนพร้อมสลิป)</div>
+    </div>
+    <div class="info-card">
+      <div class="info-icon">🏆</div>
+      <div class="info-card-label">รางวัลรวม</div>
+      <div class="info-card-value">มูลค่ากว่า <span>13,000 บาท</span><br/>+ ของรางวัลอีกมากมาย</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRIZES ===== -->
+<div class="prizes-wrapper">
+  <div class="prizes-inner">
+    <div class="section-tag" style="text-align:center;">รางวัล</div>
+    <h2 class="section-title" style="text-align:center;">เงินรางวัลผู้ชนะ</h2>
+    <div class="divider"></div>
+
+    <div class="prize-cards">
+      <div class="prize-card gold">
+        <div class="prize-rank">🥇</div>
+        <div class="prize-pos">อันดับ 1</div>
+        <div class="prize-val">รางวัลชนะเลิศ</div>
+        <div style="color:#888;font-size:0.9rem;margin-top:8px;">เงินสด + ของรางวัลพิเศษ</div>
+      </div>
+      <div class="prize-card silver">
+        <div class="prize-rank">🥈</div>
+        <div class="prize-pos">อันดับ 2</div>
+        <div class="prize-val">รางวัลรองชนะเลิศ</div>
+        <div style="color:#888;font-size:0.9rem;margin-top:8px;">เงินสด + ของรางวัลพิเศษ</div>
+      </div>
+      <div class="prize-card bronze">
+        <div class="prize-rank">🥉</div>
+        <div class="prize-pos">อันดับ 3–4</div>
+        <div class="prize-val">รางวัลอันดับ 3</div>
+        <div style="color:#888;font-size:0.9rem;margin-top:8px;">ของรางวัลพิเศษ</div>
+      </div>
+    </div>
+    <p style="text-align:center;margin-top:24px;color:#666;font-size:0.9rem;">
+      * รายละเอียดรางวัลแต่ละอันดับจะประกาศให้ทราบก่อนวันแข่งขัน
+    </p>
+    <div style="margin-top:32px;background:linear-gradient(135deg,rgba(245,200,66,0.1),rgba(201,151,42,0.05));border:1px solid rgba(245,200,66,0.2);border-radius:14px;padding:24px;text-align:center;">
+      <div style="font-size:1.5rem;margin-bottom:8px;">🎁</div>
+      <div style="font-weight:800;color:#fff;font-size:1.1rem;margin-bottom:6px;">ของรางวัลพิเศษสำหรับผู้เข้าร่วมทุกคน!</div>
+      <div style="color:#888;font-size:0.9rem;">มาพบปะ แลกเปลี่ยน และสนุกไปด้วยกัน</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOURNAMENT RULES ===== -->
+<section id="rules">
+  <div class="section-tag">กติกา</div>
+  <h2 class="section-title">รูปแบบการแข่งขัน</h2>
+  <div class="divider"></div>
+
+  <ul class="rules-list">
+    <li>
+      <div class="step-num">1</div>
+      <div class="step-text">
+        <strong>รอบคัดเลือก (Tournament Stage)</strong><br/>
+        ผู้เข้าแข่งขันทั้งหมดแบ่งเป็นกลุ่ม แข่งขันบอร์ดเกม Splendor ตามกติกามาตรฐาน
+        โดยผู้ที่มีคะแนนและอันดับสูงสุดจากแต่ละกลุ่มจะผ่านเข้าสู่รอบถัดไป
+      </div>
+    </li>
+    <li>
+      <div class="step-num">2</div>
+      <div class="step-text">
+        <strong>รอบรองชนะเลิศ (Semi-Final)</strong><br/>
+        ผู้ผ่านเข้ารอบจากรอบคัดเลือกแข่งขันต่อในรอบรองชนะเลิศ
+        ผู้ชนะจากแต่ละสายจะได้ผ่านเข้ารอบชิงชนะเลิศ
+      </div>
+    </li>
+    <li>
+      <div class="step-num">3</div>
+      <div class="step-text">
+        <strong>รอบชิงชนะเลิศ (Grand Final)</strong><br/>
+        ผู้เข้ารอบสุดท้าย <strong style="color:var(--gold);">4 คน</strong> แข่งขันชิงแชมป์ใน 1 เกมชี้ขาด
+        ผู้ชนะจะได้รับรางวัลชนะเลิศพร้อมถ้วยรางวัล
+      </div>
+    </li>
+    <li>
+      <div class="step-num">★</div>
+      <div class="step-text">
+        <strong>กติกาพิเศษ</strong><br/>
+        ใช้กติกา Splendor มาตรฐาน, ผู้ชี้ขาดมีสิทธิ์ตัดสินในกรณีที่เกิดข้อโต้แย้ง,
+        ผู้เข้าแข่งขันต้องมาถึงก่อนเวลาแข่งขันอย่างน้อย 15 นาที
+      </div>
+    </li>
+  </ul>
+</section>
+
+<!-- ===== ACTIVITIES ===== -->
+<section>
+  <div class="section-tag">กิจกรรมในงาน</div>
+  <h2 class="section-title">กิจกรรมและซุ้มในงาน</h2>
+  <div class="divider"></div>
+
+  <div class="activity-grid">
+    <div class="activity-card blue">
+      <div class="ac-icon">🎲</div>
+      <div class="ac-title">พิเศษ! เปิดโลกบอร์ดเกม</div>
+      <div class="ac-desc">
+        โดย <strong style="color:#fff;">Load Dice Boardgame</strong><br/><br/>
+        ร่วมสนุกกับกิจกรรมทดลองเล่นบอร์ดเกมหลากหลายประเภท
+        พร้อมทีมงานจาก Load Dice คอยแนะนำและสอนเล่น
+      </div>
+      <span class="ac-badge">ร่วมสนุก ฟรี! ไม่มีค่าใช้จ่าย</span>
+    </div>
+    <div class="activity-card green">
+      <div class="ac-icon">🛒</div>
+      <div class="ac-title">ซุ้มขายบอร์ดเกมพร้อมโปรโมชันสุดคุ้ม!</div>
+      <div class="ac-desc">
+        โดย <strong style="color:#fff;">Boardgame Kamp</strong><br/><br/>
+        เลือกซื้อบอร์ดเกมหลากหลายประเภท (Wingspan, Catan, Ticket to Ride และอื่นๆ)
+        พร้อมโปรโมชันราคาพิเศษเฉพาะงานนี้เท่านั้น!
+      </div>
+      <span class="ac-badge">โปรโมชันพิเศษในงาน</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PAYMENT ===== -->
+<section>
+  <div class="section-tag">วิธีสมัคร</div>
+  <h2 class="section-title">ขั้นตอนการสมัคร</h2>
+  <div class="divider"></div>
+
+  <!-- Bank Account Box -->
+  <div style="background:linear-gradient(135deg,rgba(245,200,66,0.12),rgba(201,151,42,0.06));border:2px solid var(--gold);border-radius:16px;padding:28px;margin-bottom:32px;text-align:center;">
+    <div style="font-size:0.8rem;letter-spacing:2px;color:var(--gold);font-weight:700;margin-bottom:14px;">💳 บัญชีสำหรับโอนเงินค่าสมัคร</div>
+    <div style="font-size:2rem;font-weight:800;color:#fff;letter-spacing:4px;margin-bottom:6px;">829-2-57199-6</div>
+    <div style="font-size:1rem;color:#ccc;margin-bottom:4px;">ธนาคารไทยพาณิชย์ (SCB)</div>
+    <div style="font-size:1.05rem;font-weight:700;color:var(--gold);">ศุภวิชญ์ เพ็งวงษ์</div>
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(245,200,66,0.2);">
+      <span style="background:rgba(245,200,66,0.15);color:var(--gold);font-weight:800;padding:6px 20px;border-radius:100px;font-size:1.1rem;">จำนวน 50 บาท</span>
+    </div>
+  </div>
+
+  <div class="payment-box">
+    <div class="payment-steps">
+      <div class="pay-step">
+        <div class="pay-step-num">1</div>
+        <div class="pay-step-title">โอนเงินค่าสมัคร</div>
+        <div class="pay-step-desc">โอน <strong style="color:var(--gold)">50 บาท</strong> มาที่บัญชีด้านบน</div>
+      </div>
+      <div class="pay-step">
+        <div class="pay-step-num">2</div>
+        <div class="pay-step-title">บันทึกสลิป</div>
+        <div class="pay-step-desc">ถ่ายภาพหรือบันทึกสลิปการโอนเงินให้ชัดเจน</div>
+      </div>
+      <div class="pay-step">
+        <div class="pay-step-num">3</div>
+        <div class="pay-step-title">กรอกใบสมัคร</div>
+        <div class="pay-step-desc">กรอกข้อมูลและอัปโหลดสลิปผ่านฟอร์มด้านล่าง</div>
+      </div>
+      <div class="pay-step">
+        <div class="pay-step-num">4</div>
+        <div class="pay-step-title">รอการยืนยัน</div>
+        <div class="pay-step-desc">ทีมงานจะตรวจสอบและยืนยันภายใน 24 ชั่วโมง</div>
+      </div>
+    </div>
+    <div style="margin-top:28px;padding-top:24px;border-top:1px solid rgba(245,200,66,0.15);text-align:center;">
+      <p style="color:#666;font-size:0.9rem;">ข้อมูลที่ต้องกรอก: ชื่อ-นามสกุล, ชื่อเล่น, เบอร์โทรศัพท์, อีเมล, สลิปการโอนเงิน</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== REGISTER FORM ===== -->
+<div class="form-section-wrapper" id="register">
+  <div class="form-inner">
+    <div style="text-align:center;margin-bottom:40px;">
+      <div class="section-tag">สมัครแข่งขัน</div>
+      <h2 class="section-title">กรอกใบสมัครที่นี่</h2>
+      <div class="divider"></div>
+      <p style="color:#888;">กรอกข้อมูลให้ครบถ้วน และอย่าลืมอัปโหลดสลิปการโอนเงิน 50 บาท</p>
+    </div>
+
+    <form class="reg-form" id="regForm" onsubmit="submitForm(event)">
+
+      <div class="form-notice">
+        💳 โอนเงิน <strong>50 บาท</strong> มาที่ SCB เลขที่บัญชี <strong>829-2-57199-6</strong> ชื่อบัญชี <strong>ศุภวิชญ์ เพ็งวงษ์</strong><br/>
+        จากนั้นถ่ายสลิปมาแนบในฟอร์มนี้ — ทีมงานจะยืนยันการสมัครภายใน 24 ชั่วโมง
+      </div>
+
+      <div class="form-group">
+        <label>ชื่อ-นามสกุล <span class="req">*</span></label>
+        <input type="text" id="fullname" placeholder="กรอกชื่อ-นามสกุลจริง" required />
+      </div>
+
+      <div class="form-group">
+        <label>ชื่อเล่น <span class="req">*</span></label>
+        <input type="text" id="nickname" placeholder="ชื่อที่ใช้ในงาน" required />
+      </div>
+
+      <div class="form-group">
+        <label>เบอร์โทรศัพท์ <span class="req">*</span></label>
+        <input type="tel" id="phone" placeholder="0xx-xxx-xxxx" required />
+      </div>
+
+      <div class="form-group">
+        <label>อีเมล <span class="req">*</span></label>
+        <input type="email" id="email" placeholder="example@email.com" required />
+      </div>
+
+      <div class="form-divider"></div>
+
+      <div class="form-group">
+        <label>อัปโหลดสลิปการโอนเงิน <span class="req">*</span></label>
+        <div class="slip-upload-area" id="uploadArea">
+          <input type="file" id="slipFile" accept="image/*,.pdf" required
+                 onchange="previewSlip(this)" />
+          <div class="upload-icon">📎</div>
+          <div class="upload-text">
+            <strong>คลิกหรือลากไฟล์มาวาง</strong><br/>
+            รองรับ JPG, PNG, PDF (ขนาดไม่เกิน 5MB)
+          </div>
+          <div class="slip-preview" id="slipPreview">
+            <img id="previewImg" src="" alt="preview" />
+            <div class="slip-name" id="slipFileName"></div>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        🎲 ส่งใบสมัครแข่งขัน
+      </button>
+
+      <div class="form-result" id="formResult"></div>
+    </form>
+  </div>
+</div>
+
+<!-- ===== CONTACT ===== -->
+<section style="max-width:700px;margin:0 auto;padding:48px 20px;">
+  <div class="section-tag" style="text-align:center;">ติดต่อสอบถาม</div>
+  <h2 class="section-title" style="text-align:center;">ข้อมูลเพิ่มเติม</h2>
+  <div class="divider"></div>
+  <div style="display:flex;gap:20px;flex-wrap:wrap;justify-content:center;">
+    <div class="info-card" style="text-align:center;min-width:200px;flex:1;">
+      <div class="info-icon">📘</div>
+      <div class="info-card-label">Facebook</div>
+      <div class="info-card-value"><span>Load dice boardgame</span></div>
+    </div>
+    <div class="info-card" style="text-align:center;min-width:200px;flex:1;">
+      <div class="info-icon">📞</div>
+      <div class="info-card-label">โทรศัพท์</div>
+      <div class="info-card-value"><span>082-172-9260</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="gem-row" style="margin-bottom:16px;opacity:0.4;">
+    <div class="gem" style="width:20px;height:24px;"></div>
+    <div class="gem" style="width:20px;height:24px;"></div>
+    <div class="gem" style="width:20px;height:24px;"></div>
+    <div class="gem" style="width:20px;height:24px;"></div>
+    <div class="gem" style="width:20px;height:24px;"></div>
+  </div>
+  <strong>Splendor Tournament 2569</strong><br/>
+  Tops Plaza หนองหาน จ.อุดรธานี | Central Retail<br/><br/>
+  กิจกรรมร่วมจาก <strong>Load Dice Boardgame</strong> &amp; ซุ้มจาก <strong>Boardgame Kamp</strong><br/>
+  <span style="font-size:0.85rem;color:#666;">📞 082-172-9260 &nbsp;|&nbsp; 📘 Load dice boardgame</span><br/><br/>
+  <span style="font-size:0.8rem;">© 2569 Splendor Tournament. สงวนลิขสิทธิ์</span>
+</footer>
+
+<script>
+  // ============================================================
+  // แทนที่ URL นี้ด้วย Web App URL จาก Google Apps Script ของคุณ
+  // ดูวิธีที่ไฟล์ SETUP_GUIDE.md
+  // ============================================================
+  const APPS_SCRIPT_URL = "YOUR_APPS_SCRIPT_WEB_APP_URL";
+
+  // ===== COUNTDOWN =====
+  function updateCountdown() {
+    const deadline = new Date('2026-06-27T23:59:59+07:00').getTime();
+    const now = new Date().getTime();
+    const diff = deadline - now;
+
+    if (diff <= 0) {
+      document.getElementById('countdown').innerHTML =
+        '<p style="color:var(--gem-red);font-weight:700;font-size:1.1rem;">หมดเวลารับสมัครแล้ว</p>';
+      return;
+    }
+
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+    document.getElementById('cd-days').textContent  = String(d).padStart(2, '0');
+    document.getElementById('cd-hours').textContent = String(h).padStart(2, '0');
+    document.getElementById('cd-mins').textContent  = String(m).padStart(2, '0');
+    document.getElementById('cd-secs').textContent  = String(s).padStart(2, '0');
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  // ===== SLIP PREVIEW =====
+  function previewSlip(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    document.getElementById('slipFileName').textContent = file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        document.getElementById('previewImg').src = e.target.result;
+        document.getElementById('slipPreview').style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    } else {
+      document.getElementById('previewImg').src = '';
+      document.getElementById('slipPreview').style.display = 'block';
+    }
+  }
+
+  // ===== SUBMIT FORM =====
+  async function submitForm(e) {
+    e.preventDefault();
+    const btn    = document.getElementById('submitBtn');
+    const result = document.getElementById('formResult');
+
+    btn.disabled = true;
+    btn.textContent = '⏳ กำลังส่งข้อมูล...';
+    result.style.display = 'none';
+
+    try {
+      const slipFile   = document.getElementById('slipFile').files[0];
+      let   slipBase64 = '';
+      let   slipName   = '';
+
+      if (slipFile) {
+        slipBase64 = await toBase64(slipFile);
+        slipName   = slipFile.name;
+      }
+
+      const payload = {
+        fullname:  document.getElementById('fullname').value.trim(),
+        nickname:  document.getElementById('nickname').value.trim(),
+        phone:     document.getElementById('phone').value.trim(),
+        email:     document.getElementById('email').value.trim(),
+        slipBase64,
+        slipName
+      };
+
+      const res  = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        result.className = 'form-result success';
+        result.innerHTML = '✅ ส่งใบสมัครสำเร็จ! ทีมงานจะติดต่อยืนยันภายใน 24 ชั่วโมง 🎲';
+        document.getElementById('regForm').reset();
+        document.getElementById('slipPreview').style.display = 'none';
+      } else {
+        throw new Error(data.message || 'เกิดข้อผิดพลาด');
+      }
+    } catch (err) {
+      result.className = 'form-result error';
+      result.innerHTML = '❌ ส่งข้อมูลไม่สำเร็จ: ' + err.message + '<br/><small>กรุณาลองใหม่หรือติดต่อทีมงาน</small>';
+    }
+
+    result.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = '🎲 ส่งใบสมัครแข่งขัน';
+  }
+
+  function toBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload  = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const el = document.querySelector(a.getAttribute('href'));
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>
