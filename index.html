@@ -1065,6 +1065,10 @@
         document.getElementById('slipPreview').style.display = 'none';
         document.getElementById('uploadIcon').style.display  = '';
         document.getElementById('uploadText').style.display  = '';
+      } else if (data && data.full) {
+        result.className = 'form-result error';
+        result.innerHTML = '🚫 <strong>ที่นั่งเต็มแล้ว!</strong> ขออภัย ที่นั่ง 64 ที่ถูกจองครบแล้ว<br/>'
+          + '<small>📞 สอบถาม: 082-172-9260 | FB: Load dice boardgame</small>';
       } else {
         result.className = 'form-result error';
         result.innerHTML = '❌ ' + ((data && data.message) || 'เกิดข้อผิดพลาด') + '<br/><small>📞 082-172-9260</small>';
